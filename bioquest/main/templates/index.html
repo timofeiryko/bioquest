@@ -1,1 +1,97 @@
-<b>Hello world</b>
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        /* кнопки тем и разделов */
+        a.pad {display:inline-block;border:1px dashed #007bff;margin:2px;padding:2px 6px;border-radius:8px;}
+            a.pad:hover {background:#f0ffff;text-decoration:none;}
+
+        /* ограничение для размера картинок для очень широких экранов, внедрено не везде */
+        img.img-in-test {max-height:400px;}
+
+        /* кнопки-ярлыки ответов закрытых вопросов (разделы 1 и 2) */
+        .ffield {border:1px dashed #007bff;font-size:120%;border-radius:8px;display:inline-block;margin-bottom:6px;}
+            .ffield label {padding:5px 15px 8px;cursor:pointer;display:inline-block;}
+            .ffield input {display:none;}
+        .ffield.ac,.ffield2.ac {background-color:#007bff;color:#fff;}
+
+
+        /* стили меню разделов и тем в форме загрузки */
+        .tags {}
+            .tags ul {list-style:none;padding-inline-start:0;}
+
+        .topic {border:1px dashed #007bff;border-radius:8px;padding:3px;margin:3px 0 3px 10px;}
+            .topic h3, .topic h2 {font-size:120%;}
+
+        .vis {display:none}
+
+
+    </style>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function(){
+
+            // привязка декорированных кнопок checkbox и radio к их кнопкам-ярлыкам
+	    	$("div.ffield").children("input").change(function() {
+	    	    $(this).parent().toggleClass("ac").siblings("div.ffield-radio").removeClass("ac");
+	    	})
+
+            // функции разделов и тем в форме загрузки
+	        var tagsArr = [1, 2, 3, 4, , 9, 5, 6, 10, 11, 7, 8]; //соответствие разделов блокам тем
+
+            $("#tag0 label").each(function(i) {
+                $(".topic h3").eq(tagsArr[i]-1).text($(this).text()); // забираем заголовки разделов в блоки тем
+            })
+
+            // открытие/сокрытие и обнуление полей input
+            $("#tag0 input").each(function(i) {
+                $(this).change(function() {
+                    $(".topic").eq(tagsArr[i]-1).toggleClass("vis");
+                    if (!$(this).prop("checked")) $(".topic").eq(tagsArr[i]-1).find("input").prop( "checked", false );
+                })
+
+            });
+		});
+
+
+
+    </script>
+</head>
+<body>
+
+  <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 pb-3 bg-white border-bottom shadow-sm">
+
+        <h5 class="my-0 mr-md-auto font-weight-normal">BioQuest</h5>
+
+        <nav class="my-2 my-md-0 mr-md-3">
+          <a class="font-weight-bold text-dark" href="{% url 'personal' %}" >Личный кабинет</a>
+          <a class="p-2 text-dark" href="{% url 'problems' %}">Все вопросы</a>
+          <a class="p-2 text-dark" href="{% url 'about' %}">О проекте</a>
+          <a class="p-2 text-dark" href="{% url 'add' %}">Добавить вопросы</a>
+          <a class="p-2 text-dark" href="{% url 'instructions' %}">Инструкции</a>
+        </nav>
+
+        <form class="form-inline d-flex justify-content-center md-form form-sm mt-0">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <input class="form-control form-control-sm ml-3 w-100" type="text" placeholder="Поиск вопросов"
+              aria-label="Search" name="search">
+        </form>
+
+  </div>
+
+  <div style="margin:10px 0px 10px 0px">
+    {% block content %}{% endblock %}
+  </div>
+
+</body>
+</html>
