@@ -2,20 +2,9 @@ from django.db import models
 
 # Create your models here.
 
-class Topic(models.Model):
-    name = models.CharField(max_length=100)
-    class Meta:
-        ordering = ['name']
-        verbose_name = 'Тема'
-        verbose_name_plural = 'Темы'
-    def __str__(self):
-        return self.name
-
 class Tag(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100)
-    topics = models.ManyToManyField(Topic, blank=True, related_name='ts')
-
     class Meta:
         ordering = ['name']
         verbose_name = 'Раздел'
@@ -25,6 +14,16 @@ class Tag(models.Model):
 
     def get_absolute_url(self):
         return reverse('tag_url', kwargs={'slug': self.slug})
+
+class Topic(models.Model):
+    parent_tag = models.ForeignKey(Tag, on_delete=models.CASCADE, null=True, related_name='topics')
+    name = models.CharField(max_length=100)
+    class Meta:
+        ordering = ['parent_tag', 'name']
+        verbose_name = 'Тема'
+        verbose_name_plural = 'Темы'
+    def __str__(self):
+        return self.name
 
 class Question(models.Model):
     id = models.AutoField
@@ -42,7 +41,8 @@ class Question(models.Model):
     imageA2 = models.ImageField('Иллюстрация к ответу', blank=True)
     imageA3 = models.ImageField('Иллюстрация к ответу', blank=True)
 
-    tags = models.ManyToManyField(Tag, blank=True, related_name='qs')
+    tags = models.ManyToManyField(Tag, blank=True, related_name='questions')
+    topics = models.ManyToManyField(Topic, blank=True, related_name='questions')
     class Types(models.TextChoices):
         PART1 = 'P1', ('1 правильный ответ')
         PART2 = 'P2', ('Множественный выбор')
@@ -99,3 +99,6 @@ class RelInitial(models.Model):
     class Meta:
         verbose_name = 'Число'
         verbose_name_plural = 'Числа'
+
+    def __str__(self):
+        return self.var

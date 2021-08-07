@@ -1,0 +1,51 @@
+<div class="alert alert-primary">
+
+{% for el in questions %}
+        <h3>{{ el.stage }} {{ el.year }} {{ el.grade }}</h3>
+        <h5>{{ el.part }}-{{ el.number }}</h5>
+        <p>{{ el.text|linebreaksbr }}</p>
+        <p>
+            Раздел:
+            {% for tag in el.tags.all %}
+            <a href="#">{{tag.name}}</a>
+            {% endfor %}
+            <br>
+            Темы:{% for x in el.tags.topics.all %} <a href="?topic={{x.name|urlencode}}">{{x.name}}</a>{% endfor %}
+        </p>
+        {% if el.image %}
+            <div class="col-md-8">
+                <img src="{{ el.image.url }}" class="img-fluid img-in-test" alt="Responsive image">
+            </div>
+        {% endif %}
+            <p>
+              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#x{{ el.id }}" aria-expanded="false" aria-controls="x{{ el.id }}">
+                Показать ответ
+              </button>
+            </p>
+            <div class="collapse" id="x{{ el.id }}">
+              <div class="card card-body">
+                 {{ el.answer }}
+              </div>
+            </div>
+
+            {% if el.comment or el.imageA %}
+            <p>
+              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#y{{ el.id }}" aria-expanded="false" aria-controls="y{{ el.id }}">
+                Показать разбор
+              </button>
+            </p>
+            <div class="collapse" id="y{{ el.id }}">
+              <div class="card card-body">
+                 {{ el.comment |urlize }}<br>
+                 {% if el.imageA %}
+                    <div class="col-md-8">
+                    <img src="{{ el.imageA.url }}" class="img-fluid" alt="Responsive image">
+                    </div>
+                 {% endif %}
+              </div>
+            </div>
+            {% endif %}
+        <br>
+{% endfor %}
+
+</div>

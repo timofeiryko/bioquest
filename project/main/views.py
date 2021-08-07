@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from .models import Topic, Tag, Question, VarList, Relative, RelInitial
+from django.core.paginator import Paginator
 # Create your views here.
 
 def index(request):
@@ -17,7 +19,11 @@ def personal(request):
     return render(request, 'personal.html')
 
 def problems(request):
+
+    search = request.GET.get('search', '')
     questions = Question.objects.order_by('-id')
+    tags = Tag.objects.all()
+    topic = request.GET.get('topic', '')
 
     paginator = Paginator(questions, 20)
     page_number = request.GET.get('page', 1)
@@ -34,8 +40,6 @@ def problems(request):
     else:
         next_url = ''
 
-
-    tags = Tag.objects.all()
 
     context = {
         'title': 'Вопросы',

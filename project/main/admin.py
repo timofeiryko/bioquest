@@ -8,6 +8,8 @@ from .models import Question, Tag, Topic, VarList, Relative, RelInitial
 class VarLine(nested_admin.NestedStackedInline):
     model = VarList
 
+class TopicLine(nested_admin.NestedStackedInline):
+    model = Topic
 
 class RelInitialLine(nested_admin.NestedStackedInline):
     model = RelInitial
@@ -17,14 +19,19 @@ class RelativelLine(nested_admin.NestedStackedInline):
     inlines=[RelInitialLine]
 
 class QuestionAdmin(nested_admin.NestedModelAdmin):
+    model = Question
     inlines = [
         VarLine,
         RelativelLine
     ]
 
+class TagAdmin(nested_admin.NestedModelAdmin):
+    model = Tag
+    inlines = [TopicLine]
+
 
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(Tag)
+admin.site.register(Tag, TagAdmin)
 admin.site.register(Topic)
 admin.site.register(VarList)
 admin.site.register(Relative)
