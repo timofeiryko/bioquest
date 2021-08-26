@@ -37,9 +37,15 @@ class Question(models.Model):
     image1 = models.ImageField('Иллюстрация к вопросу', blank=True)
     image2 = models.ImageField('Иллюстрация к вопросу', blank=True)
     image3 = models.ImageField('Иллюстрация к вопросу', blank=True)
+    image4 = models.ImageField('Иллюстрация к вопросу', blank=True)
+    image5 = models.ImageField('Иллюстрация к вопросу', blank=True)
     imageA1 = models.ImageField('Иллюстрация к ответу', blank=True)
     imageA2 = models.ImageField('Иллюстрация к ответу', blank=True)
     imageA3 = models.ImageField('Иллюстрация к ответу', blank=True)
+    imageA4 = models.ImageField('Иллюстрация к вопросу', blank=True)
+    imageA5 = models.ImageField('Иллюстрация к вопросу', blank=True)
+
+
 
     tags = models.ManyToManyField(Tag, blank=True, related_name='questions')
     topics = models.ManyToManyField(Topic, blank=True, related_name='questions')
@@ -70,7 +76,7 @@ class Question(models.Model):
 
 class VarList(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    var = models.CharField('Текст варианта', max_length=200)
+    var = models.CharField('Текст варианта', max_length=1000)
     is_right = models.BooleanField('Правильность', default=False)
 
     class Meta:
@@ -83,7 +89,7 @@ class VarList(models.Model):
 
 class Relative(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    var = models.CharField('Текст варианта', max_length=200)
+    var = models.CharField('Текст варианта', max_length=1000)
 
     def __str__(self):
         return self.var
@@ -94,7 +100,7 @@ class Relative(models.Model):
 
 class RelInitial(models.Model):
     parrent_relative = models.ForeignKey(Relative, on_delete=models.CASCADE, null=True)
-    var = models.CharField('Текст варианта', max_length=200)
+    var = models.CharField('Текст варианта', max_length=1000)
 
     class Meta:
         verbose_name = 'Число'
@@ -102,3 +108,15 @@ class RelInitial(models.Model):
 
     def __str__(self):
         return self.var
+
+class ItemList(models.Model):
+    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
+    text = models.CharField('Вопрос', max_length=1000)
+    ans = models.TextField('Ответ')
+    class Meta:
+        verbose_name = 'Пункт'
+        verbose_name_plural = 'Пункты'
+        ordering = ['parent_question']
+
+    def __str__(self):
+        return self.text
