@@ -1,6 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
 # Create your models here.
+
+class Profile(models.Model):   #add this class and the following fields
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class Tag(models.Model):
     name = models.CharField(max_length=100)
@@ -25,6 +31,20 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
+class MultipleImage(models.Model):
+    file = models.ImageField('Иллюстрация', blank=True, upload_to='images/')
+    label = models.CharField('Подпись', blank=True, max_length=500)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        verbose_name = 'Изображение'
+        verbose_name_plural = 'Изображения'
+
+    def __str__(self):
+        return self.label
+
 class Question(models.Model):
     id = models.AutoField
     year = models.IntegerField('Год')
@@ -33,28 +53,37 @@ class Question(models.Model):
     part = models.IntegerField('Часть')
     number = models.IntegerField('Номер')
     text = models.TextField('Текст вопроса')
+    uploaded = models.DateTimeField('Вопрос загружен', auto_now_add=True)
+    modified = models.DateTimeField('Изменено', auto_now=True)
 
-    image1 = models.ImageField('Иллюстрация к вопросу', blank=True)
-    image2 = models.ImageField('Иллюстрация к вопросу', blank=True)
-    image3 = models.ImageField('Иллюстрация к вопросу', blank=True)
-    image4 = models.ImageField('Иллюстрация к вопросу', blank=True)
-    image5 = models.ImageField('Иллюстрация к вопросу', blank=True)
-    imageA1 = models.ImageField('Иллюстрация к ответу', blank=True)
-    imageA2 = models.ImageField('Иллюстрация к ответу', blank=True)
-    imageA3 = models.ImageField('Иллюстрация к ответу', blank=True)
-    imageA4 = models.ImageField('Иллюстрация к вопросу', blank=True)
-    imageA5 = models.ImageField('Иллюстрация к вопросу', blank=True)
-
-
-
+    quauthor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='questions',
+        verbose_name='Добавил вопрос')
     tags = models.ManyToManyField(Tag, blank=True, related_name='questions')
     topics = models.ManyToManyField(Topic, blank=True, related_name='questions')
+
     class Types(models.TextChoices):
         PART1 = 'P1', ('1 правильный ответ')
         PART2 = 'P2', ('Множественный выбор')
         RELATE = 'REL', ('Соответствие')
         MANY = 'MANY', ('Пункты')
         STR = 'STR', ('Текст')
+
+    class Flags(models.TextChoices):
+        CORE = 'CORE', ('ВсОШ')
+        EXTRA = 'EXTRA', ('Другие олимпиады')
+        COMMUNITY = 'COM', ('От пользователей')
+        EXCLUSIVE = 'EXCL', ('Эксклюзив от создателей')
+
+    flag = models.CharField(
+        'Коллекция',
+        max_length=10,
+        choices=Flags.choices,
+        default=Flags.CORE,
+    )
 
     type = models.CharField(
         'Тип',
@@ -63,7 +92,7 @@ class Question(models.Model):
         default=Types.STR,
     )
 
-    comment = models.TextField('Разбор, комментарии', blank=True)
+    quimage = GenericRelation(MultipleImage)
 
     class Meta:
         verbose_name = 'Вопрос'
@@ -71,12 +100,34 @@ class Question(models.Model):
         ordering = ['-id']
 
     def __str__(self):
-        clear_id = str(self.text)[:30] + '... ' + str (self.comment)[:20] + '...'
+        clear_id = str(self.text)[:30]
         return clear_id
+
+class Comment(models.Model):
+    parent_question = models.OneToOneField(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='comment')
+    text = models.TextField('Разбор, комментарии', blank=False)
+
+    coauthor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True, blank=True,
+        related_name='comments',
+        verbose_name='Добавил разбор')
+
+    uploaded = models.DateTimeField('Вопрос загружен', auto_now_add=True, null=True)
+    modified = models.DateTimeField('Изменено', auto_now=True, null=True )
+
+    mark = models.BooleanField('Проверено экспертом', default=False)
+
+    class Meta:
+        ordering = ['parent_question']
+        verbose_name = 'Разбор'
+        verbose_name_plural = 'Разборы'
+
 
 class VarList(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    var = models.CharField('Текст варианта', max_length=1000)
+    var = models.TextField('Текст варианта')
     is_right = models.BooleanField('Правильность', default=False)
 
     class Meta:
@@ -89,7 +140,7 @@ class VarList(models.Model):
 
 class Relative(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    var = models.CharField('Текст варианта', max_length=1000)
+    var = models.TextField('Текст варианта')
 
     def __str__(self):
         return self.var
@@ -100,7 +151,7 @@ class Relative(models.Model):
 
 class RelInitial(models.Model):
     parrent_relative = models.ForeignKey(Relative, on_delete=models.CASCADE, null=True)
-    var = models.CharField('Текст варианта', max_length=1000)
+    var = models.TextField('Текст варианта')
 
     class Meta:
         verbose_name = 'Число'
@@ -111,7 +162,7 @@ class RelInitial(models.Model):
 
 class ItemList(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
-    text = models.CharField('Вопрос', max_length=1000)
+    text = models.TextField('Вопрос')
     ans = models.TextField('Ответ')
     class Meta:
         verbose_name = 'Пункт'

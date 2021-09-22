@@ -12,9 +12,9 @@
             <br>
             Темы:{% for x in el.tags.topics.all %} <a href="?topic={{x.name|urlencode}}">{{x.name}}</a>{% endfor %}
         </p>
-        {% if el.image %}
+        {% if el.image1 %}
             <div class="col-md-8">
-                <img src="{{ el.image.url }}" class="img-fluid img-in-test" alt="Responsive image">
+                <img src="{{ el.image1.url }}" class="img-fluid img-in-test" alt="Responsive image">
             </div>
         {% endif %}
             <p>
@@ -28,7 +28,7 @@
               </div>
             </div>
 
-            {% if el.comment or el.imageA %}
+            {% if el.comment or el.imageA1 %}
             <p>
               <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#y{{ el.id }}" aria-expanded="false" aria-controls="y{{ el.id }}">
                 Показать разбор
@@ -37,7 +37,7 @@
             <div class="collapse" id="y{{ el.id }}">
               <div class="card card-body">
                  {{ el.comment |urlize }}<br>
-                 {% if el.imageA %}
+                 {% if el.imageA1 %}
                     <div class="col-md-8">
                     <img src="{{ el.imageA.url }}" class="img-fluid" alt="Responsive image">
                     </div>
