@@ -32,7 +32,7 @@ class Topic(models.Model):
         return self.name
 
 class MultipleImage(models.Model):
-    file = models.ImageField('Иллюстрация', blank=True, upload_to='images/')
+    file = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
     label = models.CharField('Подпись', blank=True, max_length=500)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -44,6 +44,21 @@ class MultipleImage(models.Model):
 
     def __str__(self):
         return self.label
+
+class MultipleFile(models.Model):
+    file = models.FileField('Прикрепленный файл', blank=True, upload_to='files/')
+    label = models.CharField('Подпись', blank=True, max_length=500)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        verbose_name = 'Документ'
+        verbose_name_plural = 'Документы'
+
+    def __str__(self):
+        return self.label
+
 
 class Question(models.Model):
     id = models.AutoField
@@ -106,6 +121,8 @@ class Question(models.Model):
 class Comment(models.Model):
     parent_question = models.OneToOneField(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='comment')
     text = models.TextField('Разбор, комментарии', blank=False)
+    coimage = GenericRelation(MultipleImage)
+    cofile = GenericRelation(MultipleFile)
 
     coauthor = models.ForeignKey(
         User,

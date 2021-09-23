@@ -24,7 +24,7 @@ def problems(request):
     questions = Question.objects.order_by('-id')
     tags = Tag.objects.all()
     topic = request.GET.get('topic', '')
-
+    
     paginator = Paginator(questions, 20)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)

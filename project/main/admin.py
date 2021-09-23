@@ -4,7 +4,7 @@ from django import forms
 
 # Register your models here.
 
-from .models import Question, Tag, Topic, VarList, Relative, RelInitial, ItemList, MultipleImage, Comment
+from .models import Question, Tag, Topic, VarList, Relative, RelInitial, ItemList, Comment, MultipleImage, MultipleFile
 
 class VarLine(nested_admin.NestedTabularInline):
     model = VarList
@@ -22,11 +22,15 @@ class RelativelLine(nested_admin.NestedStackedInline):
     model = Relative
     inlines=[RelInitialLine]
 
-class MultipleImageInline(nested_admin.NestedGenericTabularInline ):
+class MultipleImageInline(nested_admin.NestedGenericTabularInline):
     model = MultipleImage
+
+class MultipleFileInline(nested_admin.NestedGenericTabularInline):
+    model = MultipleFile
 
 class CommentInline(nested_admin.NestedStackedInline):
     model = Comment
+    inlines = [MultipleImageInline, MultipleFileInline]
 
 class QuestionAdmin(nested_admin.NestedModelAdmin):
     model = Question
@@ -51,4 +55,5 @@ admin.site.register(Relative)
 admin.site.register(RelInitial)
 admin.site.register(ItemList)
 admin.site.register(MultipleImage)
+admin.site.register(MultipleFile)
 admin.site.register(Comment)

@@ -12,11 +12,11 @@
             <br>
             Темы:{% for x in el.tags.topics.all %} <a href="?topic={{x.name|urlencode}}">{{x.name}}</a>{% endfor %}
         </p>
-        {% if el.image1 %}
-            <div class="col-md-8">
-                <img src="{{ el.image1.url }}" class="img-fluid img-in-test" alt="Responsive image">
-            </div>
-        {% endif %}
+
+        {% for image in el.quimage.all %}
+          <img src="{{ image.file.url }}" class="img-fluid" alt="Responsive image">
+        {% endfor %}
+
             <p>
               <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#x{{ el.id }}" aria-expanded="false" aria-controls="x{{ el.id }}">
                 Показать ответ
