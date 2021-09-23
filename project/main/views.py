@@ -3,6 +3,23 @@ from .models import Topic, Tag, Question, VarList, Relative, RelInitial
 from django.core.paginator import Paginator
 # Create your views here.
 
+@csrf_exempt
+def update(request):
+    if request.method == "POST":
+        '''
+        pass the path of the diectory where your project will be
+        stored on PythonAnywhere in the git.Repo() as parameter.
+        Here the name of my directory is "test.pythonanywhere.com"
+        '''
+        repo = git.Repo("newbioquest.pythonanywhere.com/")
+        origin = repo.remotes.origin
+
+        origin.pull()
+
+        return HttpResponse("Updated code on PythonAnywhere")
+    else:
+        return HttpResponse("Couldn't update the code on PythonAnywhere")
+
 def index(request):
     return render(request, 'about.html')
 
@@ -24,7 +41,7 @@ def problems(request):
     questions = Question.objects.order_by('-id')
     tags = Tag.objects.all()
     topic = request.GET.get('topic', '')
-    
+
     paginator = Paginator(questions, 20)
     page_number = request.GET.get('page', 1)
     page = paginator.get_page(page_number)
