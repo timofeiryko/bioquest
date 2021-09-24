@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Topic, Tag, Question, VarList, Relative, RelInitial
+from .forms import QuestionForm
 from django.core.paginator import Paginator
-# Create your views here.
 
 import git
 from django.shortcuts import render
@@ -32,7 +32,11 @@ def about(request):
     return render(request, 'about.html')
 
 def add(request):
-    return render(request, 'add.html')
+
+    addform = QuestionForm()
+
+    context = {'addform': addform}
+    return render(request, 'add.html', context)
 
 def instructions(request):
     return render(request, 'instructions.html')

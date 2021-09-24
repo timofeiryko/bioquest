@@ -67,7 +67,7 @@ class Question(models.Model):
     year = models.IntegerField('Год')
     stage = models.CharField('Олимпиада', max_length=100)
     grade = models.IntegerField('Класс')
-    part = models.IntegerField('Часть')
+    part = models.CharField('Часть', max_length=100)
     number = models.IntegerField('Номер')
     text = models.TextField('Текст вопроса')
     uploaded = models.DateTimeField('Вопрос загружен', auto_now_add=True)

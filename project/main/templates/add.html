@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block title %}
+Добавление вопросов
+{% endblock %}
+
+{% block content %}
+
+<div class="col">
+  Здесь можно будет добавлять вопросы!
+  <form method="post">
+    {% csrf_token %}
+    {{ addform.as_p }}
+  </form>
+</div>
+
+{% endblock %}
