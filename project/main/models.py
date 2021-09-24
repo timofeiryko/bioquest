@@ -1,4 +1,4 @@
-# MODELS ARE UPDATED! IF YOU CAN SEE IT, ALL IS OK, V4
+# MODELS ARE UPDATED! TESTING V5
 
 from django.db import models
 from django.contrib.auth.models import User
