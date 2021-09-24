@@ -1,4 +1,4 @@
-# MODELS ARE UPDATED! TESTING V5
+# MODELS ARE UPDATED! TESTING V7
 
 from django.db import models
 from django.contrib.auth.models import User
