@@ -3,6 +3,11 @@ from .models import Topic, Tag, Question, VarList, Relative, RelInitial
 from django.core.paginator import Paginator
 # Create your views here.
 
+import git
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 @csrf_exempt
 def update(request):
     if request.method == "POST":

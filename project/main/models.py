@@ -1,4 +1,4 @@
-# MODELS ARE UPDATED! IF YOU CAN SEE IT, ALL IS OK
+# MODELS ARE UPDATED! IF YOU CAN SEE IT, ALL IS OK, V2
 
 from django.db import models
 from django.contrib.auth.models import User
