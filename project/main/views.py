@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from .models import Topic, Tag, Question, VarList, Relative, RelInitial
-from .forms import QuestionForm
+from .models import Topic, Tag, Question, VarList, Relative, RelInitial, Comment
+from .forms import QuestionForm, QuImageFormSet, CommentFormSet, CoImageFormSet
+from .scripts import quicksave
 from django.core.paginator import Paginator
 
 import git
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -33,9 +34,38 @@ def about(request):
 
 def add(request):
 
-    addform = QuestionForm()
 
-    context = {'addform': addform}
+    if request.method == 'POST':
+
+        addform = QuestionForm(request.POST)
+
+        question = quicksave(addform)
+
+        if question:
+            quimageform = QuImageFormSet(request.POST, request.FILES, instance=question)
+            quicksave(quimageform)
+
+            commentform = CommentFormSet(request.POST, instance=question)
+            comment = quicksave(commentform)
+
+            if comment:
+                coimageform = CoImageFormSet(request.POST, request.FILES, instance=comment[0])
+                quicksave(coimageform)
+
+        return redirect('problems')
+
+    addform = QuestionForm()
+    quimage = QuImageFormSet()
+    comment = CommentFormSet()
+    coimage = CoImageFormSet()
+    cofile = []
+
+    context = {'addform': addform,
+    'quimage': quimage,
+    'comment': comment,
+    'coimage': coimage,
+    'cofile': cofile}
+
     return render(request, 'add.html', context)
 
 def instructions(request):

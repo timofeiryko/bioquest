@@ -4,7 +4,8 @@ from django import forms
 
 # Register your models here.
 
-from .models import Question, Tag, Topic, VarList, Relative, RelInitial, ItemList, Comment, MultipleImage, MultipleFile
+from .models import Question, QuImage, Tag, Topic, VarList, Relative, RelInitial, ItemList
+from .models import Comment, CoImage, CoFile
 
 class VarLine(nested_admin.NestedTabularInline):
     model = VarList
@@ -22,21 +23,24 @@ class RelativelLine(nested_admin.NestedStackedInline):
     model = Relative
     inlines=[RelInitialLine]
 
-class MultipleImageInline(nested_admin.NestedGenericTabularInline):
-    model = MultipleImage
+class QuImageInnline(nested_admin.NestedStackedInline):
+    model = QuImage
 
-class MultipleFileInline(nested_admin.NestedGenericTabularInline):
-    model = MultipleFile
+class CoImageInnline(nested_admin.NestedStackedInline):
+    model = CoImage
+
+class CoFileInline(nested_admin.NestedStackedInline):
+    model = CoFile
 
 class CommentInline(nested_admin.NestedStackedInline):
     model = Comment
-    inlines = [MultipleImageInline, MultipleFileInline]
+    inlines = [CoImageInnline, CoFileInline]
 
 class QuestionAdmin(nested_admin.NestedModelAdmin):
     model = Question
     inlines = [
+        QuImageInnline,
         CommentInline,
-        MultipleImageInline,
         VarLine,
         RelativelLine,
         ItemLine,
@@ -49,11 +53,12 @@ class TagAdmin(nested_admin.NestedModelAdmin):
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Tag, TagAdmin)
+admin.site.register(QuImage)
 admin.site.register(Topic)
 admin.site.register(VarList)
 admin.site.register(Relative)
 admin.site.register(RelInitial)
 admin.site.register(ItemList)
-admin.site.register(MultipleImage)
-admin.site.register(MultipleFile)
 admin.site.register(Comment)
+admin.site.register(CoImage)
+admin.site.register(CoFile)

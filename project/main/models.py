@@ -33,43 +33,14 @@ class Topic(models.Model):
     def __str__(self):
         return self.name
 
-class MultipleImage(models.Model):
-    file = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
-    label = models.CharField('Подпись', blank=True, max_length=500)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    class Meta:
-        verbose_name = 'Изображение'
-        verbose_name_plural = 'Изображения'
-
-    def __str__(self):
-        return self.label
-
-class MultipleFile(models.Model):
-    file = models.FileField('Прикрепленный файл', blank=True, upload_to='files/')
-    label = models.CharField('Подпись', blank=True, max_length=500)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    class Meta:
-        verbose_name = 'Документ'
-        verbose_name_plural = 'Документы'
-
-    def __str__(self):
-        return self.label
-
-
 class Question(models.Model):
     id = models.AutoField
-    year = models.IntegerField('Год')
-    stage = models.CharField('Олимпиада', max_length=100)
-    grade = models.IntegerField('Класс')
-    part = models.CharField('Часть', max_length=100)
-    number = models.IntegerField('Номер')
-    text = models.TextField('Текст вопроса')
+    year = models.IntegerField('Год', null=True)
+    stage = models.CharField('Олимпиада', max_length=100, null=True)
+    grade = models.IntegerField('Класс', null=True)
+    part = models.CharField('Часть', max_length=100, null=True)
+    number = models.IntegerField('Номер', null=True)
+    text = models.TextField('Текст вопроса', null=True)
     uploaded = models.DateTimeField('Вопрос загружен', auto_now_add=True)
     modified = models.DateTimeField('Изменено', auto_now=True)
 
@@ -109,8 +80,6 @@ class Question(models.Model):
         default=Types.STR,
     )
 
-    quimage = GenericRelation(MultipleImage)
-
     class Meta:
         verbose_name = 'Вопрос'
         verbose_name_plural = 'Вопросы'
@@ -123,8 +92,6 @@ class Question(models.Model):
 class Comment(models.Model):
     parent_question = models.OneToOneField(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='comment')
     text = models.TextField('Разбор, комментарии', blank=False)
-    coimage = GenericRelation(MultipleImage)
-    cofile = GenericRelation(MultipleFile)
 
     coauthor = models.ForeignKey(
         User,
@@ -143,9 +110,42 @@ class Comment(models.Model):
         verbose_name = 'Разбор'
         verbose_name_plural = 'Разборы'
 
+class QuImage(models.Model):
+	parent = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+	file = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
+	label = models.CharField('Подпись', blank=True, max_length=500)
+
+	class Meta:
+		verbose_name = 'Иллюстрация к вопросу'
+		verbose_name_plural = 'Иллюстрации к вопросу'
+
+	def __str__(self):
+		return self.label
+
+class CoImage(models.Model):
+	parent = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+	file = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
+	label = models.CharField('Подпись', blank=True, max_length=500)
+	class Meta:
+		verbose_name = 'Иллюстрация к рабору'
+		verbose_name_plural = 'Иллюстрации к разбору'
+
+	def __str__(self):
+		return self.label
+
+class CoFile(models.Model):
+	parent = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True, related_name='files')
+	file = models.FileField('Прикрепленный файл', blank=True, upload_to='files/')
+	label = models.CharField('Подпись', blank=True, max_length=500)
+	class Meta:
+		verbose_name = 'Файл к разбору'
+		verbose_name_plural = 'Файлы к разбору'
+	def __str__(self):
+		return self.label
+
 
 class VarList(models.Model):
-    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
+    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
     var = models.TextField('Текст варианта')
     is_right = models.BooleanField('Правильность', default=False)
 
@@ -158,7 +158,7 @@ class VarList(models.Model):
         return self.var
 
 class Relative(models.Model):
-    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
+    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
     var = models.TextField('Текст варианта')
 
     def __str__(self):
@@ -169,7 +169,7 @@ class Relative(models.Model):
         verbose_name_plural = 'Буквы'
 
 class RelInitial(models.Model):
-    parrent_relative = models.ForeignKey(Relative, on_delete=models.CASCADE, null=True)
+    parrent_relative = models.ForeignKey(Relative, on_delete=models.CASCADE, null=True, blank=True)
     var = models.TextField('Текст варианта')
 
     class Meta:
@@ -180,7 +180,7 @@ class RelInitial(models.Model):
         return self.var
 
 class ItemList(models.Model):
-    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True)
+    parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
     text = models.TextField('Вопрос')
     ans = models.TextField('Ответ')
     class Meta:

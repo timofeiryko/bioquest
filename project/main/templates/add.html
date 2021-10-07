@@ -8,9 +8,25 @@
 
 <div class="col">
   Здесь можно будет добавлять вопросы!
-  <form method="post">
+  <form method="post", enctype="multipart/form-data">
     {% csrf_token %}
+    ----------
+    Вопрос
     {{ addform.as_p }}
+    ----------
+    Картинки к вопросу
+    {{ quimage.as_p }}
+    ----------
+    Разбор вопроса
+    {{ comment.as_p }}
+    ----------
+    Картинки к разбору (до 3 шт)
+    {{ coimage.as_p }}
+    ----------
+    Файлы к разбору (до 3 шт)
+    {{ cofile.as_p }}
+    <br>
+    <button type="submit">Добавить вопрос</button>
   </form>
 </div>
 
