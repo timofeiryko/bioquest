@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Topic, Tag, Question, VarList, Relative, RelInitial, Comment
-from .forms import QuestionForm, QuImageFormSet, CommentFormSet, CoImageFormSet
+from .forms import QuestionForm, QuImageFormSet, CommentFormSet, CoImageFormSet, CoFileFormSet
 from .scripts import quicksave
 from django.core.paginator import Paginator
 
@@ -34,7 +34,6 @@ def about(request):
 
 def add(request):
 
-
     if request.method == 'POST':
 
         addform = QuestionForm(request.POST)
@@ -42,15 +41,28 @@ def add(request):
         question = quicksave(addform)
 
         if question:
-            quimageform = QuImageFormSet(request.POST, request.FILES, instance=question)
-            quicksave(quimageform)
+            quimages = QuImageFormSet(request.POST, request.FILES, instance=question)
+            addform.save()
+            for im in quimages:
+                quicksave(im)
 
-            commentform = CommentFormSet(request.POST, instance=question)
+
+            commentform = CommentFormSet(request.POST, request.FILES, instance=question)
             comment = quicksave(commentform)
 
             if comment:
-                coimageform = CoImageFormSet(request.POST, request.FILES, instance=comment[0])
-                quicksave(coimageform)
+                for el in comment:
+
+                    coimages = CoImageFormSet(request.POST, request.FILES, instance=el)
+                    for im in coimages:
+                        quicksave(im)
+
+                    cofiles = CoFileFormSet(request.POST, request.FILES, instance=el)
+                    for f in cofiles:
+                        quicksave(f)
+
+                commentform.save()
+
 
         return redirect('problems')
 
@@ -58,7 +70,7 @@ def add(request):
     quimage = QuImageFormSet()
     comment = CommentFormSet()
     coimage = CoImageFormSet()
-    cofile = []
+    cofile = CoFileFormSet
 
     context = {'addform': addform,
     'quimage': quimage,
@@ -106,4 +118,5 @@ def problems(request):
         'search': search,
         'topic': topic
         }
+
     return render(request, 'problems.html', context = context)

@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-
+import os
 # Create your models here.
 
 class Profile(models.Model):   #add this class and the following fields
@@ -111,27 +111,27 @@ class Comment(models.Model):
         verbose_name_plural = 'Разборы'
 
 class QuImage(models.Model):
-	parent = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
-	file = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
-	label = models.CharField('Подпись', blank=True, max_length=500)
+	quiparent = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+	quifile = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
+	quilabel = models.CharField('Подпись', blank=True, max_length=500)
 
 	class Meta:
 		verbose_name = 'Иллюстрация к вопросу'
 		verbose_name_plural = 'Иллюстрации к вопросу'
 
 	def __str__(self):
-		return self.label
+		return self.quilabel
 
 class CoImage(models.Model):
-	parent = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
-	file = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
-	label = models.CharField('Подпись', blank=True, max_length=500)
+	coiparent = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+	coifile = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
+	coilabel = models.CharField('Подпись', blank=True, max_length=500)
 	class Meta:
 		verbose_name = 'Иллюстрация к рабору'
 		verbose_name_plural = 'Иллюстрации к разбору'
 
 	def __str__(self):
-		return self.label
+		return self.coilabel
 
 class CoFile(models.Model):
 	parent = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True, related_name='files')
@@ -142,6 +142,8 @@ class CoFile(models.Model):
 		verbose_name_plural = 'Файлы к разбору'
 	def __str__(self):
 		return self.label
+	def filename(self):
+		return os.path.basename(self.file.name)
 
 
 class VarList(models.Model):

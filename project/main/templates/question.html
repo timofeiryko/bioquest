@@ -13,8 +13,10 @@
             Темы:{% for x in el.tags.topics.all %} <a href="?topic={{x.name|urlencode}}">{{x.name}}</a>{% endfor %}
         </p>
 
-        {% for image in el.quimage.all %}
-          <img src="{{ image.file.url }}" class="img-fluid" alt="Responsive image">
+        {% for image in el.images.all %}
+          {% if image.quifile %}
+            <img src="{{ image.quifile.url }}" class="img-fluid" alt="Responsive image">
+          {% endif %}
         {% endfor %}
 
             <p>
@@ -28,7 +30,7 @@
               </div>
             </div>
 
-            {% if el.comment or el.imageA1 %}
+            {% if el.comment %}
             <p>
               <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#y{{ el.id }}" aria-expanded="false" aria-controls="y{{ el.id }}">
                 Показать разбор
@@ -36,16 +38,26 @@
             </p>
             <div class="collapse" id="y{{ el.id }}">
               <div class="card card-body">
-                 {{ el.comment |urlize }}<br>
-                 {% if el.imageA1 %}
+                 {{ el.comment.text |urlize }}<br>
+                 {% for image in el.comment.images.all %}
+                 {% if image.coifile %}
                     <div class="col-md-8">
-                    <img src="{{ el.imageA.url }}" class="img-fluid" alt="Responsive image">
+                    <img src="{{ image.coifile.url }}" class="img-fluid" alt="Responsive image">
                     </div>
                  {% endif %}
+                 {% endfor %}
+                 Файлы
+                 <br>
+                 {% for file in el.comment.files.all %}
+                 {% if file.file %}
+                 {{ file.label }}: <a href="{{ file.file.url }}">{{ file.filename }}</a>
+                 {% endif %}
+                 {% endfor %}
               </div>
             </div>
             {% endif %}
         <br>
+
 {% endfor %}
 
 </div>

@@ -23,10 +23,10 @@ class RelativelLine(nested_admin.NestedStackedInline):
     model = Relative
     inlines=[RelInitialLine]
 
-class QuImageInnline(nested_admin.NestedStackedInline):
+class QuImageInline(nested_admin.NestedStackedInline):
     model = QuImage
 
-class CoImageInnline(nested_admin.NestedStackedInline):
+class CoImageInline(nested_admin.NestedStackedInline):
     model = CoImage
 
 class CoFileInline(nested_admin.NestedStackedInline):
@@ -34,12 +34,12 @@ class CoFileInline(nested_admin.NestedStackedInline):
 
 class CommentInline(nested_admin.NestedStackedInline):
     model = Comment
-    inlines = [CoImageInnline, CoFileInline]
+    inlines = [CoImageInline, CoFileInline]
 
 class QuestionAdmin(nested_admin.NestedModelAdmin):
     model = Question
     inlines = [
-        QuImageInnline,
+        QuImageInline,
         CommentInline,
         VarLine,
         RelativelLine,
