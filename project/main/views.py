@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Topic, Tag, Question, VarList, Relative, RelInitial, Comment
 from .forms import QuestionForm, QuImageFormSet, CommentFormSet, CoImageFormSet, CoFileFormSet
+from .forms import VarFormSet, LetterFormSet
 from .scripts import quicksave
 from django.core.paginator import Paginator
 
@@ -63,20 +64,31 @@ def add(request):
 
                 commentform.save()
 
+            varform = VarFormSet(request.POST, instance = question)
+            quicksave(varform)
 
-        return redirect('problems')
+            letterform = VarFormSet(request.POST, instance = question)
+            letter = quicksave(letterform)
+
+        if question and quimages:
+            return redirect('problems')
 
     addform = QuestionForm()
     quimage = QuImageFormSet()
     comment = CommentFormSet()
     coimage = CoImageFormSet()
-    cofile = CoFileFormSet
+    cofile = CoFileFormSet()
+
+    var = VarFormSet()
+    letter = LetterFormSet()
 
     context = {'addform': addform,
     'quimage': quimage,
     'comment': comment,
     'coimage': coimage,
-    'cofile': cofile}
+    'cofile': cofile,
+    'var': var,
+    'letter': letter}
 
     return render(request, 'add.html', context)
 

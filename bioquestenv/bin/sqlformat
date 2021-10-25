@@ -1,4 +1,4 @@
-#!/home/dreamtim/Desktop/Coding/bioquest/bioquestenv/bin/python3
+#!/home/dreamtim/Desktop/Coding/bioquest/bioquestenv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys

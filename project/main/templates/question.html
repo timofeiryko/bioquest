@@ -13,7 +13,7 @@
             Темы:{% for x in el.tags.topics.all %} <a href="?topic={{x.name|urlencode}}">{{x.name}}</a>{% endfor %}
         </p>
 
-        {% for image in el.images.all %}
+        {% for image in el.quimage.all %}
           {% if image.quifile %}
             <img src="{{ image.quifile.url }}" class="img-fluid" alt="Responsive image">
           {% endif %}

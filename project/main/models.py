@@ -111,7 +111,7 @@ class Comment(models.Model):
         verbose_name_plural = 'Разборы'
 
 class QuImage(models.Model):
-	quiparent = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='images')
+	quiparent = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True, related_name='quimage')
 	quifile = models.ImageField('Прикрепленнное изображение', blank=True, upload_to='images/')
 	quilabel = models.CharField('Подпись', blank=True, max_length=500)
 
@@ -161,7 +161,7 @@ class VarList(models.Model):
 
 class Relative(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
-    var = models.TextField('Текст варианта')
+    lettervar = models.TextField('Текст варианта')
 
     def __str__(self):
         return self.var
@@ -172,7 +172,7 @@ class Relative(models.Model):
 
 class RelInitial(models.Model):
     parrent_relative = models.ForeignKey(Relative, on_delete=models.CASCADE, null=True, blank=True)
-    var = models.TextField('Текст варианта')
+    numbervar = models.TextField('Текст варианта')
 
     class Meta:
         verbose_name = 'Число'
@@ -183,8 +183,8 @@ class RelInitial(models.Model):
 
 class ItemList(models.Model):
     parent_question = models.ForeignKey(Question, on_delete=models.CASCADE, null=True, blank=True)
-    text = models.TextField('Вопрос')
-    ans = models.TextField('Ответ')
+    itemtext = models.TextField('Вопрос')
+    itemans = models.TextField('Ответ')
     class Meta:
         verbose_name = 'Пункт'
         verbose_name_plural = 'Пункты'

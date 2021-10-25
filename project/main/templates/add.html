@@ -6,27 +6,39 @@
 
 {% block content %}
 
+{% load crispy_forms_tags %}
+
 <div class="col">
   Здесь можно будет добавлять вопросы!
-  <form method="post", enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data" action=".">
     {% csrf_token %}
     ----------
     Вопрос
-    {{ addform.as_p }}
+    {{ addform|crispy }}
     ----------
     Картинки к вопросу (до 5 шт)
-    {{ quimage.as_p }}
+      {{ quimage.management_form }}
+      {% for item in quimage %}
+        {{ item|crispy }}
+      {% endfor %}
+      <button id="add-quimage-form" class="btn btn-primary my-3">Add Another Image</button>
+    <br>
     ----------
     Разбор вопроса
-    {{ comment.as_p }}
+    {{ comment|crispy }}
     ----------
     Картинки к разбору (до 3 шт)
-    {{ coimage.as_p }}
+    {{ coimage|crispy }}
     ----------
     Файлы к разбору (до 3 шт)
-    {{ cofile.as_p }}
-    <br>
-    <button type="submit">Добавить вопрос</button>
+    {{ cofile|crispy }}
+    ----------
+    Варианты ответа
+    {{ var|crispy }}
+    ----------
+    Буквы для соответствия
+    {{ letter|crispy }}
+    <input type="submit" name="submit" value="Submit" class="btn btn-primary">
   </form>
 </div>
 
